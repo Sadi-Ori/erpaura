@@ -1,4 +1,6 @@
+import uuid
 from django.db import models
+from django.utils import timezone
 
 
 class Contact(models.Model):
@@ -61,6 +63,29 @@ class Lead(models.Model):
 
     def __str__(self):
         return f"{self.title} - ${self.estimated_value} ({self.stage})"
+
+
+class Activity(models.Model):
+    ACTIVITY_TYPES = [
+        ('call', 'Phone Call'),
+        ('meeting', 'Client Meeting'),
+        ('email', 'Email Sent'),
+        ('note', 'Internal Note'),
+    ]
+
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE, related_name='activities')
+    lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True, blank=True, related_name='activities')
+    activity_type = models.CharField(max_length=20, choices=ACTIVITY_TYPES, default='call')
+    summary = models.CharField(max_length=255)
+    details = models.TextField(blank=True)
+    performed_by = models.CharField(max_length=100, default='Account Executive')
+    performed_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-performed_at']
+
+    def __str__(self):
+        return f"[{self.activity_type.upper()}] {self.summary} ({self.contact.name})"
 
 
 class RecruitmentApplicant(models.Model):

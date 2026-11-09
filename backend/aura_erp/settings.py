@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'apps.procurement.apps.ProcurementConfig',
     'apps.manufacturing.apps.ManufacturingConfig',
     'apps.maintenance.apps.MaintenanceConfig',
+    'apps.recruitment.apps.RecruitmentConfig',
 ]
 
 MIDDLEWARE = [

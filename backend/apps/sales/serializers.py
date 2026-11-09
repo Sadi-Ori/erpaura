@@ -1,25 +1,23 @@
 from rest_framework import serializers
-from .models import Coupon, Cart, CartItem, Order, OrderItem, Invoice, Quotation, QuotationItem, POSTransaction
+from .models import Cart, CartItem, Order, OrderItem, Invoice, Coupon, Quotation, QuotationItem, POSTransaction, POSRegister
 from apps.products.serializers import ProductSerializer, PricingPlanSerializer
 
 
 class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
-        fields = ['id', 'code', 'description', 'discount_percentage', 'fixed_discount', 'is_active']
+        fields = '__all__'
 
 
 class CartItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
     plan = PricingPlanSerializer(read_only=True)
-    product_id = serializers.IntegerField(write_only=True, required=False)
-    plan_id = serializers.IntegerField(write_only=True, required=False)
     unit_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = CartItem
-        fields = ['id', 'product', 'plan', 'product_id', 'plan_id', 'quantity', 'billing_cycle', 'unit_price', 'total_price']
+        fields = '__all__'
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -27,14 +25,16 @@ class CartSerializer(serializers.ModelSerializer):
     subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     discount_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    coupon = CouponSerializer(read_only=True)
 
     class Meta:
         model = Cart
-        fields = ['id', 'session_id', 'items', 'coupon', 'subtotal', 'discount_amount', 'total']
+        fields = '__all__'
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    plan = PricingPlanSerializer(read_only=True)
+
     class Meta:
         model = OrderItem
         fields = '__all__'
@@ -46,7 +46,6 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
-        read_only_fields = ['id', 'order_number', 'created_at']
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
@@ -67,6 +66,21 @@ class QuotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quotation
         fields = '__all__'
+
+
+class POSRegisterSerializer(serializers.ModelSerializer):
+    transactions_count = serializers.SerializerMethodField()
+    total_sales = serializers.SerializerMethodField()
+
+    class Meta:
+        model = POSRegister
+        fields = '__all__'
+
+    def get_transactions_count(self, obj):
+        return obj.transactions.count()
+
+    def get_total_sales(self, obj):
+        return sum(t.total_amount for t in obj.transactions.all())
 
 
 class POSTransactionSerializer(serializers.ModelSerializer):

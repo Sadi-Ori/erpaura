@@ -23,6 +23,7 @@ def api_root(request):
             'procurement': '/api/procurement/',
             'manufacturing': '/api/manufacturing/',
             'maintenance': '/api/maintenance/',
+            'recruitment': '/api/recruitment/',
             'admin': '/admin/',
         }
     })
@@ -43,4 +44,5 @@ urlpatterns = [
     path('api/procurement/', include('apps.procurement.urls', namespace='procurement')),
     path('api/manufacturing/', include('apps.manufacturing.urls', namespace='manufacturing')),
     path('api/maintenance/', include('apps.maintenance.urls', namespace='maintenance')),
+    path('api/recruitment/', include('apps.recruitment.urls', namespace='recruitment')),
 ]

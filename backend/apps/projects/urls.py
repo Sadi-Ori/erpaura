@@ -1,5 +1,14 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import (
+    ProjectViewSet,
+    MilestoneViewSet,
+    TaskViewSet,
+    TaskChecklistViewSet,
+    TimesheetViewSet,
+    IssueViewSet,
+    ProjectStatsAPIView,
+    # Legacy aliases
     ProjectListCreateAPIView,
     ProjectDetailAPIView,
     TaskListCreateAPIView,
@@ -9,10 +18,16 @@ from .views import (
 
 app_name = 'projects'
 
+router = DefaultRouter()
+router.register(r'projects', ProjectViewSet, basename='project')
+router.register(r'milestones', MilestoneViewSet, basename='milestone')
+router.register(r'tasks', TaskViewSet, basename='task')
+router.register(r'checklists', TaskChecklistViewSet, basename='checklist')
+router.register(r'timesheets', TimesheetViewSet, basename='timesheet')
+router.register(r'issues', IssueViewSet, basename='issue')
+
 urlpatterns = [
-    path('projects/', ProjectListCreateAPIView.as_view(), name='project-list-create'),
-    path('projects/<str:code>/', ProjectDetailAPIView.as_view(), name='project-detail'),
-    path('tasks/', TaskListCreateAPIView.as_view(), name='task-list-create'),
-    path('tasks/<int:pk>/', TaskDetailAPIView.as_view(), name='task-detail'),
-    path('timesheets/', TimesheetListCreateAPIView.as_view(), name='timesheet-list-create'),
+    path('stats/', ProjectStatsAPIView.as_view(), name='projects-stats'),
+    # Router endpoints
+    path('', include(router.urls)),
 ]

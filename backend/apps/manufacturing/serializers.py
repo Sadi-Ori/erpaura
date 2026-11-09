@@ -1,10 +1,16 @@
 from rest_framework import serializers
-from .models import BillOfMaterials, BOMItem, ProductionOrder
+from .models import BillOfMaterials, BOMItem, ProductionOrder, WorkCenter
 from apps.products.serializers import ProductSerializer
 
 
+class WorkCenterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkCenter
+        fields = '__all__'
+
+
 class BOMItemSerializer(serializers.ModelSerializer):
-    total_cost = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    total_cost = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
 
     class Meta:
         model = BOMItem

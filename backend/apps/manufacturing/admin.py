@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import BillOfMaterials, BOMItem, ProductionOrder
+from .models import BillOfMaterials, BOMItem, ProductionOrder, WorkCenter
 
 
 class BOMItemInline(admin.TabularInline):
@@ -17,6 +17,13 @@ class BillOfMaterialsAdmin(admin.ModelAdmin):
 
 @admin.register(ProductionOrder)
 class ProductionOrderAdmin(admin.ModelAdmin):
-    list_display = ('order_number', 'bom', 'planned_quantity', 'completed_quantity', 'status', 'start_date', 'due_date')
+    list_display = ('order_number', 'bom', 'planned_quantity', 'completed_quantity', 'status', 'start_date', 'assigned_workstation')
     list_filter = ('status', 'assigned_workstation')
     search_fields = ('order_number', 'bom__name')
+
+
+@admin.register(WorkCenter)
+class WorkCenterAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name', 'category', 'hourly_rate', 'capacity_hours_per_day', 'is_active')
+    list_filter = ('is_active', 'category')
+    search_fields = ('code', 'name')

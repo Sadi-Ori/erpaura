@@ -25,6 +25,7 @@ import {
   Sparkles,
   Building2,
   CheckCircle2,
+  UserCheck,
 } from 'lucide-react';
 
 const erpModules = [
@@ -38,7 +39,8 @@ const erpModules = [
   { name: 'Inventory & Warehouses', path: '/app/inventory', icon: Boxes, badge: 'WMS' },
   { name: 'Manufacturing (MRP)', path: '/app/manufacturing', icon: Factory, badge: 'Shop Floor' },
   { name: 'Maintenance & Assets', path: '/app/maintenance', icon: Wrench, badge: null },
-  { name: 'Human Resources (HR)', path: '/app/hr', icon: Briefcase, badge: 'Leaves' },
+  { name: 'Human Resources (HR)', path: '/app/hr', icon: Briefcase, badge: 'HRMS' },
+  { name: 'Recruitment (RMS)', path: '/app/recruitment', icon: UserCheck, badge: 'Hiring' },
   { name: 'System Settings', path: '/app/settings', icon: Settings, badge: null },
 ];
 

@@ -20,6 +20,7 @@ import {
   Store,
   ArrowRight,
   Search,
+  Wrench,
 } from 'lucide-react';
 
 const allModules = [
@@ -94,6 +95,15 @@ const allModules = [
     color: 'from-indigo-600 to-purple-700',
     description: 'Multi-level Bills of Materials (BOMs), work centers, routing steps, scrap rates, and shop floor operator timers.',
     features: ['Multi-Level BOM Architecture', 'Work Center Capacity', 'Shop Floor Tablet Mode', 'Production Cost Variance'],
+  },
+  {
+    title: 'Computerized Maintenance (CMMS)',
+    slug: 'maintenance-management',
+    category: 'Operations',
+    icon: Wrench,
+    color: 'from-amber-500 to-orange-600',
+    description: 'Track plant equipment, preventive maintenance schedules, breakdown work requests, and asset reliability.',
+    features: ['Equipment Asset Register', 'Preventive Maintenance Calendars', 'Breakdown Repair Tickets', 'Technician Dispatch'],
   },
   {
     title: 'Product Catalog System',

@@ -4,6 +4,22 @@ from django.utils import timezone
 from apps.products.models import Product
 
 
+class WorkCenter(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=150)
+    category = models.CharField(max_length=100, default='Assembly & Fabrication')
+    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, default=75.00)
+    capacity_hours_per_day = models.DecimalField(max_digits=5, decimal_places=2, default=16.00)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['code']
+
+    def __str__(self):
+        return f"[{self.code}] {self.name} (${self.hourly_rate}/hr)"
+
+
 class BillOfMaterials(models.Model):
     code = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=200)

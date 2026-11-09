@@ -18,6 +18,14 @@ import {
   Employee,
   Department,
   TimeOffRequest,
+  WorkCenter,
+  Activity,
+  ProcurementStats,
+  ManufacturingStats,
+  MaintenanceStats,
+  CRMStats,
+  SalesStats,
+  Order,
 } from './types';
 
 const DJANGO_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
@@ -154,6 +162,13 @@ export async function getLeads(): Promise<Lead[]> {
       { id: 2, title: 'Autonomous WMS Integration', contact: 1, contact_name: 'Acme Global Corp', estimated_value: '18000.00', stage: 'proposal', probability_percentage: 60, source: 'Website Inquiry' },
     ];
   }
+}
+
+export async function createLead(payload: Partial<Lead>): Promise<Lead> {
+  return fetchJson<Lead>('/api/crm/leads/', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
 }
 
 // -------------------------------------------------------------
@@ -385,6 +400,13 @@ export async function updateProductionOrder(moId: number, payload: Partial<Produ
   });
 }
 
+export async function createProductionOrder(payload: Partial<ProductionOrder>): Promise<ProductionOrder> {
+  return fetchJson<ProductionOrder>('/api/manufacturing/orders/', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
 // -------------------------------------------------------------
 // MAINTENANCE & ASSETS
 // -------------------------------------------------------------
@@ -399,6 +421,8 @@ export async function getEquipment(): Promise<Equipment[]> {
     ];
   }
 }
+
+export const getEquipmentList = getEquipment;
 
 export async function getMaintenanceRequests(): Promise<MaintenanceRequest[]> {
   try {
@@ -480,3 +504,253 @@ export async function updateTimeOffRequest(requestId: number, payload: Partial<T
     body: JSON.stringify(payload),
   });
 }
+
+// -------------------------------------------------------------
+// ADVANCED PROCUREMENT ACTIONS
+// -------------------------------------------------------------
+export async function getProcurementStats(): Promise<ProcurementStats> {
+  try {
+    return await fetchJson<ProcurementStats>('/api/procurement/stats/');
+  } catch (e) {
+    return {
+      total_spend: 69825.0,
+      total_committed: 98490.0,
+      total_orders: 4,
+      draft_count: 1,
+      sent_count: 1,
+      received_count: 1,
+      billed_count: 1,
+      vendors_count: 2,
+    };
+  }
+}
+
+export async function sendPurchaseOrder(id: number | string): Promise<any> {
+  return fetchJson(`/api/procurement/orders/${id}/send_order/`, { method: 'POST' });
+}
+
+export async function receivePurchaseOrderGoods(id: number | string, warehouseId?: number): Promise<any> {
+  return fetchJson(`/api/procurement/orders/${id}/receive_goods/`, {
+    method: 'POST',
+    body: JSON.stringify({ warehouse_id: warehouseId }),
+  });
+}
+
+export async function billPurchaseOrder(id: number | string): Promise<any> {
+  return fetchJson(`/api/procurement/orders/${id}/bill_order/`, { method: 'POST' });
+}
+
+// -------------------------------------------------------------
+// ADVANCED MANUFACTURING & MRP ACTIONS
+// -------------------------------------------------------------
+export async function getManufacturingStats(): Promise<ManufacturingStats> {
+  try {
+    return await fetchJson<ManufacturingStats>('/api/manufacturing/stats/');
+  } catch (e) {
+    return {
+      total_orders: 4,
+      planned_count: 1,
+      in_progress_count: 1,
+      qa_count: 1,
+      completed_count: 1,
+      total_planned_units: 130,
+      total_completed_units: 68,
+      boms_count: 1,
+      workcenters_count: 4,
+    };
+  }
+}
+
+export async function getWorkCenters(): Promise<WorkCenter[]> {
+  try {
+    const data = await fetchJson<any>('/api/manufacturing/workcenters/');
+    return data.results || data;
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function startProductionOrder(id: number | string): Promise<any> {
+  return fetchJson(`/api/manufacturing/orders/${id}/start_production/`, { method: 'POST' });
+}
+
+export async function completeProductionOrderQA(id: number | string): Promise<any> {
+  return fetchJson(`/api/manufacturing/orders/${id}/complete_qa/`, { method: 'POST' });
+}
+
+export async function completeProductionOrder(id: number | string, completedQty?: number): Promise<any> {
+  return fetchJson(`/api/manufacturing/orders/${id}/complete_order/`, {
+    method: 'POST',
+    body: JSON.stringify({ completed_quantity: completedQty }),
+  });
+}
+
+export async function createBillOfMaterials(payload: any): Promise<any> {
+  return fetchJson('/api/manufacturing/boms/', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+// -------------------------------------------------------------
+// ADVANCED MAINTENANCE & CMMS ACTIONS
+// -------------------------------------------------------------
+export async function getMaintenanceStats(): Promise<MaintenanceStats> {
+  try {
+    return await fetchJson<MaintenanceStats>('/api/maintenance/stats/');
+  } catch (e) {
+    return {
+      total_equipment: 5,
+      operational_count: 3,
+      under_maintenance_count: 1,
+      decommissioned_count: 1,
+      operational_rate: 60.0,
+      total_requests: 4,
+      open_requests: 1,
+      in_progress_requests: 1,
+      waiting_parts_requests: 1,
+      resolved_requests: 1,
+      critical_requests: 1,
+    };
+  }
+}
+
+export async function startMaintenanceWork(id: number | string): Promise<any> {
+  return fetchJson(`/api/maintenance/requests/${id}/start_work/`, { method: 'POST' });
+}
+
+export async function markWaitingParts(id: number | string): Promise<any> {
+  return fetchJson(`/api/maintenance/requests/${id}/mark_waiting_parts/`, { method: 'POST' });
+}
+
+export async function resolveMaintenanceRequest(id: number | string, notes?: string): Promise<any> {
+  return fetchJson(`/api/maintenance/requests/${id}/resolve/`, {
+    method: 'POST',
+    body: JSON.stringify({ notes }),
+  });
+}
+
+export async function registerEquipment(payload: any): Promise<any> {
+  return fetchJson('/api/maintenance/equipment/', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function toggleEquipmentStatus(id: number | string): Promise<any> {
+  return fetchJson(`/api/maintenance/equipment/${id}/toggle_operational/`, { method: 'POST' });
+}
+
+// -------------------------------------------------------------
+// ADVANCED CRM & LEAD PIPELINE ACTIONS
+// -------------------------------------------------------------
+export async function getCRMStats(): Promise<CRMStats> {
+  try {
+    return await fetchJson<CRMStats>('/api/crm/stats/');
+  } catch (e) {
+    return {
+      total_pipeline_value: 154000.0,
+      won_revenue: 32000.0,
+      total_leads: 6,
+      won_count: 1,
+      lost_count: 0,
+      win_rate: 100.0,
+      contacts_count: 6,
+      customers_count: 2,
+      prospects_count: 1,
+      vendors_count: 2,
+      partners_count: 1,
+      stage_breakdown: {},
+    };
+  }
+}
+
+export async function getActivities(contactId?: number): Promise<Activity[]> {
+  try {
+    const url = contactId ? `/api/crm/activities/?contact=${contactId}` : '/api/crm/activities/';
+    const data = await fetchJson<any>(url);
+    return data.results || data;
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function createActivity(payload: Partial<Activity>): Promise<Activity> {
+  return fetchJson<Activity>('/api/crm/activities/', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function moveLeadStage(id: number | string, stage: string): Promise<any> {
+  return fetchJson(`/api/crm/leads/${id}/move_stage/`, {
+    method: 'POST',
+    body: JSON.stringify({ stage }),
+  });
+}
+
+export async function markLeadWon(id: number | string): Promise<any> {
+  return fetchJson(`/api/crm/leads/${id}/mark_won/`, { method: 'POST' });
+}
+
+export async function markLeadLost(id: number | string, reason?: string): Promise<any> {
+  return fetchJson(`/api/crm/leads/${id}/mark_lost/`, {
+    method: 'POST',
+    body: JSON.stringify({ reason }),
+  });
+}
+
+// -------------------------------------------------------------
+// ADVANCED SALES & INVOICING ACTIONS
+// -------------------------------------------------------------
+export async function getSalesStats(): Promise<SalesStats> {
+  try {
+    return await fetchJson<SalesStats>('/api/sales/stats/');
+  } catch (e) {
+    return {
+      total_revenue: 61600.0,
+      total_orders: 2,
+      paid_invoices_amount: 61600.0,
+      unpaid_invoices_amount: 26400.0,
+      overdue_count: 0,
+      total_quotes: 3,
+      accepted_quotes: 1,
+      conversion_rate: 33.3,
+    };
+  }
+}
+
+export async function convertQuotationToOrder(id: number | string): Promise<any> {
+  return fetchJson(`/api/sales/quotes/${id}/convert_to_order/`, { method: 'POST' });
+}
+
+export async function acceptQuotation(id: number | string): Promise<any> {
+  return fetchJson(`/api/sales/quotes/${id}/accept/`, { method: 'POST' });
+}
+
+export async function declineQuotation(id: number | string): Promise<any> {
+  return fetchJson(`/api/sales/quotes/${id}/decline/`, { method: 'POST' });
+}
+
+export async function markInvoicePaid(id: number | string): Promise<any> {
+  return fetchJson(`/api/sales/invoices-manage/${id}/mark_paid/`, { method: 'POST' });
+}
+
+export async function getOrders(): Promise<Order[]> {
+  try {
+    const data = await fetchJson<any>('/api/sales/orders/');
+    return data.results || data;
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function getInvoices(): Promise<Invoice[]> {
+  try {
+    const data = await fetchJson<any>('/api/sales/invoices-manage/');
+    return data.results || data;
+  } catch (e) {
+    return [];
+  }
+}
+

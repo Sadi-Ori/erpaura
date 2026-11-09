@@ -42,17 +42,21 @@ const moduleDetails: Record<string, any> = {
     description: 'Aura PMS provides an enterprise-ready workspace where engineering, product, and client delivery teams coordinate seamlessly. From high-level milestone roadmaps to detailed daily timesheet accounting, everything is synchronized directly with customer contracts and billing.',
     features: [
       'Interactive Kanban boards with customizable stage columns and WIP limits',
-      'Gantt chart visualization with auto-adjusting milestone dependencies',
+      'Milestone & Release Roadmap tracker with phase criteria and deliverables',
       'Task estimation vs actual hours logged with timesheet approvals',
-      'Direct integration with Customer Contacts and Billing Invoices',
+      'Comprehensive Bug & Issue tracker with severity classification and reproduction steps',
       'Task assignment notifications, priority tagging, and checklist sub-items',
       'Exportable project velocity charts and team resource utilization',
     ],
     architecture: {
-      djangoModels: ['Project', 'Task', 'Timesheet', 'ProjectStage', 'Milestone'],
-      endpoints: ['/api/projects/projects/', '/api/projects/tasks/', '/api/projects/timesheets/'],
-      databaseTables: ['projects_project', 'projects_task', 'projects_timesheet'],
+      djangoModels: ['Project', 'Milestone', 'Task', 'TaskChecklist', 'Timesheet', 'Issue'],
+      endpoints: ['/api/projects/projects/', '/api/projects/tasks/', '/api/projects/milestones/', '/api/projects/timesheets/', '/api/projects/issues/'],
+      databaseTables: ['projects_project', 'projects_milestone', 'projects_task', 'projects_timesheet', 'projects_issue'],
     },
+    launchPortalUrl: '/projects',
+    launchConsoleUrl: '/app/projects',
+    launchPortalLabel: 'Launch Project Workstation',
+    launchConsoleLabel: 'Open Project Console',
   },
   'inventory-management': {
     title: 'Inventory & Warehouse Management',
@@ -61,18 +65,22 @@ const moduleDetails: Record<string, any> = {
     tagline: 'Stay on top of your stock levels with real-time multi-warehouse operations.',
     description: 'Track stock balances, lots, serial numbers, multi-warehouse transfers, and automated safety stock reorder levels. Fully integrated with procurement purchase orders and sales dispatch.',
     features: [
-      'Multi-warehouse and multi-bin location management',
-      'Batch and serial number traceability from vendor receipt to customer delivery',
+      'Multi-warehouse and multi-bin location management across 4 global facilities',
       'Automated minimum stock alerts and automated purchase order generation',
+      'Inter-warehouse transfer execution with instant source/destination reconciliation',
       'Cycle count audits, inventory adjustment vouchers, and scrap reconciliation',
       'Real-time valuation based on FIFO, LIFO, or Weighted Average Costing',
       'Barcode and QR code mobile scanning support for warehouse operators',
     ],
     architecture: {
-      djangoModels: ['Warehouse', 'StockItem', 'StockMovement', 'BinLocation'],
-      endpoints: ['/api/inventory/warehouses/', '/api/inventory/stock/', '/api/inventory/movements/'],
-      databaseTables: ['inventory_warehouse', 'inventory_stockitem', 'inventory_stockmovement'],
+      djangoModels: ['Warehouse', 'BinLocation', 'StockItem', 'StockMovement'],
+      endpoints: ['/api/inventory/warehouses/', '/api/inventory/stock/', '/api/inventory/movements/', '/api/inventory/stats/'],
+      databaseTables: ['inventory_warehouse', 'inventory_binlocation', 'inventory_stockitem', 'inventory_stockmovement'],
     },
+    launchPortalUrl: '/inventory',
+    launchConsoleUrl: '/app/inventory',
+    launchPortalLabel: 'Launch Multi-Warehouse Hub',
+    launchConsoleLabel: 'Open WMS Console',
   },
   'sales-management': {
     title: 'Sales & Quoting Engine',
@@ -93,26 +101,35 @@ const moduleDetails: Record<string, any> = {
       endpoints: ['/api/sales/orders/', '/api/sales/invoices/', '/api/sales/cart/'],
       databaseTables: ['sales_order', 'sales_orderitem', 'sales_invoice'],
     },
+    launchPortalUrl: '/sales',
+    launchConsoleUrl: '/app/sales',
+    launchPortalLabel: 'Launch Sales & Invoicing Hub',
+    launchConsoleLabel: 'Open Sales Console',
   },
   'employee-management': {
-    title: 'Employee & HR Management',
+    title: 'Employee & Payroll Management System (HRMS)',
     category: 'Human Resources',
     icon: Users,
-    tagline: 'Manage and track employee details, contracts, department trees, and performance.',
-    description: 'Centralize your workforce records in a secure, role-governed repository. Maintain employee contracts, emergency contacts, organizational hierarchy charts, salary history, and performance appraisal milestones.',
+    tagline: 'Staff directory, real-time punch clock attendance, leave quota management, automated salary payroll batching, and performance appraisals.',
+    description: 'An enterprise-grade Human Resource Management and Online Payroll System (HRMS) built for Aura ERP. Centralizes organizational hierarchy, department designations, digital employee 360 profiles, live attendance clocking, time-off leave balances, monthly automated payroll batch execution with itemized allowances and statutory tax deductions, printable digital payslips, and 360 performance reviews.',
     features: [
-      'Comprehensive digital personnel files with document attachment vaults',
-      'Dynamic organizational hierarchy tree and reporting chain visualizer',
-      'Department budget allocation and headcount planning tools',
-      'Employee self-service portal for profile updates and time off requests',
-      'Skill competency matrix and role certification tracking',
-      'Granular role-based security ensuring sensitive payroll data isolation',
+      '360 Personnel Records: Complete staff directory with designations, salary grades, reporting managers, and emergency contacts',
+      'Live Punch Clock & Attendance Tracking: Daily clock-in/out registers with late minute calculation and working hours tally',
+      'Time-Off & Leave Quota Management: Multi-type leave balance accounts (Annual, Sick, Casual) with 1-click HR approval workflow',
+      'Automated Monthly Batch Payroll: 1-click batch calculation with allowances (housing 20%, medical 10%, transport) and deductions (tax 15%, provident fund 8%, health insurance)',
+      'Printable Digital Payslips: Branded salary vouchers with itemized earnings, deductions, and payment status tracking',
+      '360 Performance Appraisals: Multi-metric evaluation rubrics (technical, communication, punctuality, leadership) and promotion tracking',
+      'Dual-Experience Architecture: HR Management Administration Console and Employee Self-Service (ESS) Portal',
     ],
     architecture: {
-      djangoModels: ['Department', 'Employee', 'TimeOffRequest', 'Contract'],
-      endpoints: ['/api/hr/departments/', '/api/hr/employees/', '/api/hr/timeoffs/'],
-      databaseTables: ['hr_department', 'hr_employee', 'hr_timeoffrequest'],
+      djangoModels: ['Department', 'Designation', 'Employee', 'AttendanceRecord', 'TimeOffRequest', 'LeaveBalance', 'PayrollEntry', 'PerformanceReview'],
+      endpoints: ['/api/hr/employees/', '/api/hr/attendance/', '/api/hr/time-off/', '/api/hr/payroll/', '/api/hr/reviews/', '/api/hr/stats/'],
+      databaseTables: ['hr_department', 'hr_designation', 'hr_employee', 'hr_attendancerecord', 'hr_timeoffrequest', 'hr_leavebalance', 'hr_payrollentry', 'hr_performancereview'],
     },
+    launchPortalUrl: '/employees',
+    launchConsoleUrl: '/app/hr',
+    launchPortalLabel: 'Launch Employee Self-Service (ESS)',
+    launchConsoleLabel: 'Open HR Administration Console',
   },
   'purchase-order': {
     title: 'Purchase Order & Procurement',
@@ -129,10 +146,14 @@ const moduleDetails: Record<string, any> = {
       'Recurring blanket purchase orders for raw materials and cloud services',
     ],
     architecture: {
-      djangoModels: ['PurchaseOrder', 'PurchaseItem', 'VendorReceipt', 'VendorBill'],
-      endpoints: ['/api/purchase/orders/', '/api/purchase/vendors/'],
-      databaseTables: ['purchase_order', 'purchase_item'],
+      djangoModels: ['PurchaseOrder', 'PurchaseOrderItem'],
+      endpoints: ['/api/procurement/orders/', '/api/procurement/items/', '/api/procurement/stats/'],
+      databaseTables: ['procurement_purchaseorder', 'procurement_purchaseorderitem'],
     },
+    launchPortalUrl: '/procurement',
+    launchConsoleUrl: '/app/procurement',
+    launchPortalLabel: 'Launch Procurement Hub',
+    launchConsoleLabel: 'Open Procurement Console',
   },
   'manufacturing-management': {
     title: 'Manufacturing & MRP Engine',
@@ -149,10 +170,14 @@ const moduleDetails: Record<string, any> = {
       'Real-time manufacturing cost variance analysis (standard vs actual cost)',
     ],
     architecture: {
-      djangoModels: ['BillOfMaterial', 'WorkCenter', 'ManufacturingOrder', 'WorkOrder'],
-      endpoints: ['/api/manufacturing/boms/', '/api/manufacturing/orders/'],
-      databaseTables: ['mfg_bom', 'mfg_workcenter', 'mfg_manufacturingorder'],
+      djangoModels: ['BillOfMaterials', 'BOMItem', 'ProductionOrder', 'WorkCenter'],
+      endpoints: ['/api/manufacturing/boms/', '/api/manufacturing/orders/', '/api/manufacturing/stats/'],
+      databaseTables: ['manufacturing_billofmaterials', 'manufacturing_bomitem', 'manufacturing_productionorder'],
     },
+    launchPortalUrl: '/manufacturing',
+    launchConsoleUrl: '/app/manufacturing',
+    launchPortalLabel: 'Launch Manufacturing Terminal',
+    launchConsoleLabel: 'Open Shop Floor MRP',
   },
   'point-of-sale': {
     title: 'Point of Sale (POS)',
@@ -164,15 +189,19 @@ const moduleDetails: Record<string, any> = {
       'Touchscreen-optimized cashier register with quick product keys',
       'Universal USB & Bluetooth barcode scanner and scale hardware integration',
       'Split payment support (Cash, Card, Gift Voucher, Customer Account)',
-      'Offline local cache with automated background syncing when internet returns',
+      'Instant branded 80mm digital printable receipt generation',
       'Shift opening and closing cash float drawer reconciliation reports',
-      'Customer loyalty points earning and redemption at checkout',
+      'Automatic inventory deduction and stock movement sync on checkout',
     ],
     architecture: {
-      djangoModels: ['PosSession', 'PosRegister', 'PosOrder', 'PosPayment'],
-      endpoints: ['/api/pos/sessions/', '/api/pos/orders/'],
-      databaseTables: ['pos_session', 'pos_order'],
+      djangoModels: ['POSRegister', 'POSTransaction', 'StockItem', 'StockMovement'],
+      endpoints: ['/api/sales/pos/', '/api/sales/pos-registers/', '/api/sales/pos-stats/'],
+      databaseTables: ['sales_posregister', 'sales_postransaction'],
     },
+    launchPortalUrl: '/pos',
+    launchConsoleUrl: '/app/pos',
+    launchPortalLabel: 'Launch Touch POS Terminal',
+    launchConsoleLabel: 'Open POS Sales Console',
   },
   'contact-management': {
     title: 'Contact Management & CRM',
@@ -189,10 +218,84 @@ const moduleDetails: Record<string, any> = {
       'REST API and webhook triggers on contact lifecycle stage updates',
     ],
     architecture: {
-      djangoModels: ['Contact', 'Lead', 'Activity', 'Opportunity'],
-      endpoints: ['/api/crm/contacts/', '/api/crm/leads/'],
-      databaseTables: ['crm_contact', 'crm_lead'],
+      djangoModels: ['Contact', 'Lead', 'Activity', 'RecruitmentApplicant'],
+      endpoints: ['/api/crm/contacts/', '/api/crm/leads/', '/api/crm/activities/', '/api/crm/stats/'],
+      databaseTables: ['crm_contact', 'crm_lead', 'crm_activity'],
     },
+    launchPortalUrl: '/crm',
+    launchConsoleUrl: '/app/contacts',
+    launchPortalLabel: 'Launch CRM Pipeline Hub',
+    launchConsoleLabel: 'Open Contact Directory',
+  },
+  'maintenance-management': {
+    title: 'Computerized Maintenance (CMMS)',
+    category: 'Operations',
+    icon: Factory,
+    tagline: 'Track plant equipment, preventive maintenance schedules, and breakdown work orders.',
+    description: 'Ensure maximum plant operational uptime and asset reliability. Log equipment breakdowns, dispatch maintenance technicians, schedule calibration cycles, and verify ISO audit compliance.',
+    features: [
+      'Comprehensive plant machinery and equipment asset registry with serial tags',
+      'Breakdown work order ticketing with priority matrix (Critical to Low)',
+      'Technician assignment and live work order status tracking',
+      'Preventive maintenance schedules with recurring inspection windows',
+      'Spare parts hold and resolution verification workflows',
+      'Mean Time Between Failures (MTBF) and operational availability reporting',
+    ],
+    architecture: {
+      djangoModels: ['Equipment', 'MaintenanceRequest'],
+      endpoints: ['/api/maintenance/equipment/', '/api/maintenance/requests/', '/api/maintenance/stats/'],
+      databaseTables: ['maintenance_equipment', 'maintenance_maintenancerequest'],
+    },
+    launchPortalUrl: '/maintenance',
+    launchConsoleUrl: '/app/maintenance',
+    launchPortalLabel: 'Launch CMMS Workstation',
+    launchConsoleLabel: 'Open Maintenance Console',
+  },
+  'invoice-management': {
+    title: 'Invoicing & Recurring Billing',
+    category: 'Revenue',
+    icon: Receipt,
+    tagline: 'Generate branded PDF tax invoices, track payments, and reconcile accounts receivable.',
+    description: 'Automate customer billing with localized tax rates, payment status tracking, and 1-click printable PDF generation.',
+    features: [
+      'Instant branded printable PDF invoice generation with window.print()',
+      'Automated line item tax calculations and multi-currency billing',
+      'Accounts receivable aging and overdue invoice tracking',
+      '1-click payment reconciliation with bank wire, card, and check tenders',
+    ],
+    architecture: {
+      djangoModels: ['Invoice', 'Order', 'Quotation'],
+      endpoints: ['/api/sales/invoices-manage/', '/api/sales/stats/'],
+      databaseTables: ['sales_invoice'],
+    },
+    launchPortalUrl: '/sales/invoices',
+    launchConsoleUrl: '/app/sales',
+    launchPortalLabel: 'Launch Digital Billing Hub',
+    launchConsoleLabel: 'Open Invoices Console',
+  },
+  'recruitment-management': {
+    title: 'Recruitment & Applicant Tracking (ATS)',
+    category: 'Human Resources',
+    icon: Briefcase,
+    tagline: 'Multi-entity vacancy management, reusable applicant profiles, screening questions, and interview scorecards.',
+    description: 'A full-stack recruitment management system built to simplify the process of creating vacancies, receiving applications, screening candidates, managing interviews, and tracking recruitment progress across a company and its subsidiaries.',
+    features: [
+      'Multi-subsidiary vacancy governance across legal entities and departments',
+      'Universal reusable applicant profile (Education, Experience, Skills, CV attachments)',
+      'Vacancy-specific custom screening questions (Single line, Paragraph, Yes/No, Multi-choice)',
+      'Candidate draft saving and real-time application status tracker',
+      'Visual recruitment pipeline Kanban board across stages',
+      'Interview scheduler with Google Meet links and panelist assignment',
+      'Structured 1-5 star rubric evaluation scorecard with hire/reject recommendations',
+      'Internal recruiter notes and confidential activity logging',
+    ],
+    architecture: {
+      djangoModels: ['Subsidiary', 'Vacancy', 'VacancyQuestion', 'ApplicantProfile', 'JobApplication', 'Interview', 'InterviewEvaluation', 'RecruitmentNote'],
+      endpoints: ['/api/recruitment/vacancies/', '/api/recruitment/applications/', '/api/recruitment/interviews/', '/api/recruitment/profiles/'],
+      databaseTables: ['recruitment_subsidiary', 'recruitment_vacancy', 'recruitment_jobapplication', 'recruitment_interview'],
+    },
+    launchPortalUrl: '/recruitment',
+    launchConsoleUrl: '/app/recruitment',
   },
 };
 
@@ -263,13 +366,32 @@ function ModuleDetailContent({ params }: Props) {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/demo"
-                className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition-all"
-              >
-                <PlayCircle className="w-4 h-4" />
-                <span>Test in Live Interactive Demo</span>
-              </Link>
+              {mod.launchPortalUrl ? (
+                <>
+                  <Link
+                    href={mod.launchPortalUrl}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl shadow-md shadow-indigo-600/30 hover:-translate-y-0.5 transition-all"
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{mod.launchPortalLabel || 'Launch Candidate Career Portal'}</span>
+                  </Link>
+                  <Link
+                    href={mod.launchConsoleUrl}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-indigo-300 bg-indigo-950/60 hover:bg-indigo-900/60 border border-indigo-500/40 rounded-xl transition-all"
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>{mod.launchConsoleLabel || 'Open HR Recruiter Console'}</span>
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  href="/demo"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition-all"
+                >
+                  <PlayCircle className="w-4 h-4" />
+                  <span>Test in Live Interactive Demo</span>
+                </Link>
+              )}
               <button
                 onClick={openContact}
                 className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl transition-colors"

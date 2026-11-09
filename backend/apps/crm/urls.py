@@ -1,16 +1,22 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import (
-    ContactListCreateAPIView,
-    ContactDetailAPIView,
-    LeadListCreateAPIView,
-    RecruitmentApplicantListCreateAPIView,
+    ContactViewSet,
+    LeadViewSet,
+    ActivityViewSet,
+    RecruitmentApplicantViewSet,
+    CRMStatsAPIView,
 )
 
 app_name = 'crm'
 
+router = DefaultRouter()
+router.register(r'contacts', ContactViewSet, basename='contact')
+router.register(r'leads', LeadViewSet, basename='lead')
+router.register(r'activities', ActivityViewSet, basename='activity')
+router.register(r'applicants', RecruitmentApplicantViewSet, basename='recruitment-applicant')
+
 urlpatterns = [
-    path('contacts/', ContactListCreateAPIView.as_view(), name='contact-list-create'),
-    path('contacts/<int:pk>/', ContactDetailAPIView.as_view(), name='contact-detail'),
-    path('leads/', LeadListCreateAPIView.as_view(), name='lead-list-create'),
-    path('recruitment/', RecruitmentApplicantListCreateAPIView.as_view(), name='recruitment-list-create'),
+    path('stats/', CRMStatsAPIView.as_view(), name='crm-stats'),
+    path('', include(router.urls)),
 ]

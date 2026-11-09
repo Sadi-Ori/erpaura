@@ -1,0 +1,105 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import {
+  Factory,
+  Layers,
+  Cpu,
+  ShieldCheck,
+  ArrowLeft,
+  Timer,
+  Boxes,
+} from 'lucide-react';
+
+interface Props {
+  children: React.ReactNode;
+}
+
+export default function ManufacturingLayout({ children }: Props) {
+  const pathname = usePathname();
+
+  const navLinks = [
+    { label: 'Shop Floor & Orders', href: '/manufacturing', icon: Factory, exact: true },
+    { label: 'Bills of Materials (BOM)', href: '/manufacturing/boms', icon: Layers, exact: false },
+    { label: 'Work Centers', href: '/manufacturing/workcenters', icon: Cpu, exact: false },
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+      {/* Enterprise Top Bar */}
+      <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/modules/manufacturing-management"
+              className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+              title="Back to Module Catalog"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Link>
+
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold">
+                <Factory className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold text-sm tracking-tight text-white">
+                    Aura Manufacturing & MRP
+                  </span>
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    Operations
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400">
+                  Shop Floor Execution, Work Orders, Multi-Level BoMs & Capacity
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/app/manufacturing"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 text-xs font-semibold border border-slate-700 transition-colors"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Console Workspace</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Sub-navigation tabs */}
+        <div className="border-t border-slate-800/80 bg-slate-900/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 overflow-x-auto py-2">
+            {navLinks.map((tab) => {
+              const active = tab.exact ? pathname === tab.href : pathname.startsWith(tab.href);
+              const Icon = tab.icon;
+              return (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${
+                    active
+                      ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/20'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {children}
+      </main>
+    </div>
+  );
+}

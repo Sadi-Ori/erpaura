@@ -10,17 +10,25 @@ from .views import (
     InvoiceDetailAPIView,
     QuotationViewSet,
     POSTransactionViewSet,
+    POSRegisterViewSet,
+    POSStatsAPIView,
     InvoiceViewSet,
+    OrderViewSet,
+    SalesStatsAPIView,
 )
 
 app_name = 'sales'
 
 router = DefaultRouter()
 router.register(r'quotes', QuotationViewSet, basename='quotation')
+router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'pos', POSTransactionViewSet, basename='pos-transaction')
+router.register(r'pos-registers', POSRegisterViewSet, basename='pos-register')
 router.register(r'invoices-manage', InvoiceViewSet, basename='invoice-manage')
 
 urlpatterns = [
+    path('stats/', SalesStatsAPIView.as_view(), name='sales-stats'),
+    path('pos-stats/', POSStatsAPIView.as_view(), name='pos-stats'),
     path('cart/', CartDetailAPIView.as_view(), name='cart-detail'),
     path('cart/add/', CartAddItemAPIView.as_view(), name='cart-add'),
     path('cart/remove/<int:item_id>/', CartRemoveItemAPIView.as_view(), name='cart-remove'),

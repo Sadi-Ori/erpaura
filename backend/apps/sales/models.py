@@ -191,6 +191,20 @@ class QuotationItem(models.Model):
         return f"{self.quantity}x {self.item_name} for Quote #{self.quotation.quote_number}"
 
 
+class POSRegister(models.Model):
+    name = models.CharField(max_length=100, default='Main Register Terminal #01')
+    store_location = models.CharField(max_length=150, default='Downtown Flagship Store')
+    active_cashier = models.CharField(max_length=100, default='Sarah Jenkins')
+    opening_float = models.DecimalField(max_digits=10, decimal_places=2, default=250.00)
+    current_cash = models.DecimalField(max_digits=10, decimal_places=2, default=250.00)
+    is_open = models.BooleanField(default=True)
+    opened_at = models.DateTimeField(default=timezone.now)
+    closed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} ({'OPEN' if self.is_open else 'CLOSED'})"
+
+
 class POSTransaction(models.Model):
     PAYMENT_CHOICES = [
         ('cash', 'Cash Tender'),
@@ -200,6 +214,7 @@ class POSTransaction(models.Model):
     ]
 
     receipt_number = models.CharField(max_length=50, unique=True, default=uuid.uuid4)
+    register = models.ForeignKey(POSRegister, on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions')
     cashier_name = models.CharField(max_length=100, default='Admin Operator')
     customer_name = models.CharField(max_length=150, default='Walk-in Customer')
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -210,7 +225,7 @@ class POSTransaction(models.Model):
     change_due = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default='card')
     items_data = models.JSONField(default=list)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ['-created_at']

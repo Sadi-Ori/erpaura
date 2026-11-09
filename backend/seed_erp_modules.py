@@ -36,9 +36,9 @@ def seed_modules():
     vendor2, _ = Contact.objects.get_or_create(
         email='parts@apexchipsets.io',
         defaults={
-            'name': 'Apex Chipsets & Robotics Ltd',
+            'name': 'Copeex Chipsets & Robotics Ltd',
             'phone': '+1 (555) 444-2211',
-            'company': 'Apex Chipsets Ltd',
+            'company': 'Copeex Chipsets Ltd',
             'contact_type': 'vendor',
             'status': 'active',
             'address': '800 Semiconductor Ave, Austin, TX',
